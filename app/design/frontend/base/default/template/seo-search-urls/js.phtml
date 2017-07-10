@@ -1,0 +1,55 @@
+<?php
+/**
+ * @category    Fishpig
+ * @package    Fishpig_SeoSearchUrls
+ * @license      http://fishpig.co.uk/license.txt
+ * @author       Ben Tideswell <ben@fishpig.co.uk>
+ */
+?>
+<?php $helper = $this->helper('seosearchurls') ?>
+<script type="text/javascript">
+//<[!CDATA[
+
+	(function() {
+		var frm = false;
+		var fld = false;
+		
+		$$('form').each(function(elem) {
+			var action = elem.readAttribute('action');
+
+			if (!frm && action && action.indexOf('<?php echo $helper->getFormAction() ?>') > 0) {
+				frm = elem;
+			}
+		});
+		
+		if (!frm) {
+			var elem = $('search');
+
+			if (elem && elem.type === 'text') {
+				frm = elem.up('form');
+			}
+		}
+
+		if (frm) {
+			frm.observe('submit', function(event) {
+				Event.stop(event);
+				
+				frm.getElements().each(function(elem) {
+					if (!fld && elem.readAttribute('name') === '<?php echo $helper->getFormFieldName() ?>') {
+						fld = elem;
+					}
+				});
+				
+				var value = fld.getValue()
+					.toLowerCase()
+						.replace(/^\s+|\s+$/g, '')
+							.replace('  ', ' ')
+								.replace(/ /g, '-');
+
+				window.location.href = '<?php echo $this->getUrl() ?><?php echo $helper->getFrontName() ?>/' + encodeURI(value) + '/';
+			});
+		}
+	})();
+
+//]]>
+</script>
